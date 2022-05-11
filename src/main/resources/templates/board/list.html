@@ -49,7 +49,7 @@
     </nav>
     <div class="container">
         <h2>게시판</h2>
-        <div>총 건수 : <span th:text="${#lists.size(board)}"></span></div>
+        <div>총 건수 : <span th:text="${board.totalElements}"></span></div>
         <table class="table table-striped">
             <thead>
               <tr>
@@ -67,6 +67,19 @@
               </tr>
             </tbody>
           </table>
+          <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+              <li class="page-item" th:classappend="${1 == board.pageable.pageNumber + 1} ? 'disabled'">
+                <a class="page-link" th:href="@{/board/list(page=${board.pageable.pageNumber - 1})}">&lt;</a>
+              </li>
+              <li class="page-item" th:classappend="${i == board.pageable.pageNumber + 1} ? 'disabled'" th:each="i : ${#numbers.sequence(startPage, endPage)}">
+                  <a class="page-link" href="#" th:href="@{/board/list(page=${i - 1})}" th:text="${i}">1</a>
+              </li>
+              <li class="page-item" th:classappend="${board.totalPages == board.pageable.pageNumber + 1} ? 'disabled'">
+                <a class="page-link" href="#" th:href="@{/board/list(page=${board.pageable.pageNumber + 1})}">&gt;</a>
+              </li>
+            </ul>
+          </nav>
           <div class="text-right">
             <a type="button" class="btn btn-primary" th:href="@{/board/form}">글쓰기</a>
           </div>
