@@ -4,18 +4,18 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Data
-public class Board {
+public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String title;
-    private String content;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    private String name;
+
+    @ManyToMany(mappedBy = "roles")
     @JsonIgnore
-    private User user;
+    private List<User> users;
 }
