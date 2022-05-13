@@ -1,8 +1,10 @@
 package com.example.myhome.controller;
 
 import com.example.myhome.model.Board;
+import com.example.myhome.model.QUser;
 import com.example.myhome.model.User;
 import com.example.myhome.repository.UserRepository;
+import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -18,11 +20,23 @@ class UserApiController {
     private UserRepository repository;
 
     @GetMapping("/user")
-    List<User> all() {
-        List<User> users = repository.findAll();
-        log.debug("getBoards().size() 호출 전");
-        log.debug("getBoards().size() : {}", users.get(0).getBoards().size());
-        log.debug("getBoards().size() 호출 후");
+    Iterable<User> all(@RequestParam(required = false) String method, @RequestParam(required = false) String text) {
+        Iterable<User> users = null;
+        if("query".equals(method)) {
+            users = repository.findByUsernameQuery(text);
+        } else if("nativeQuery".equals(method)) {
+            users = repository.findByUsernameNativeQuery(text);
+        } else if ("querydsl".equals(method)) {
+            QUser user = QUser.user;
+            Predicate predicate = user.username.contains(text);
+            users = repository.findAll(predicate);
+        } else if ("querydslCustom".equals(method)) {
+            users = repository.findByUsernameCustom(text);
+        } else if ("jdbc".equals(method)) {
+            users = repository.findByUsernameJdbc(text);
+        } else {
+            users = repository.findAll();
+        }
         return users;
     }
 
